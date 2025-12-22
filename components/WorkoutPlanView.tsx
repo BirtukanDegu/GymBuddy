@@ -25,7 +25,7 @@ export function WorkoutPlanView({
       type: "Cardio",
       exercises: "Chest / Shoulders / Triceps",
       color: "from-pink-300 to-pink-400",
-      image: "/images/3.svg",
+      image: "/images/7.svg",
     },
     {
       id: "lower" as const,
@@ -296,7 +296,7 @@ export function WorkoutPlanView({
                   </div>
                   <div className="absolute right-10 -bottom-28 w-40 h-40">
                     <Image
-                      src="/images/3.svg"
+                      src="/images/7.svg"
                       alt="Exercise"
                       fill
                       className="object-contain"
