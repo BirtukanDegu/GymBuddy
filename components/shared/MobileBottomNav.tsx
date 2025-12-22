@@ -18,7 +18,7 @@ export const MobileBottomNav = memo(function MobileBottomNav({
   };
 
   return (
-    <div className="fixed md:absolute bottom-0 left-0 right-0 max-w-md mx-auto bg-[#252525]/10 backdrop-blur-md border-t border-white/5 rounded-t-3xl md:rounded-b-3xl">
+    <div className="fixed md:absolute bottom-0 left-0 right-0 max-w-md mx-auto bg-[#252525]/95 backdrop-blur-md border-t border-white/5 rounded-t-3xl md:rounded-b-3xl">
       <nav className="px-6 py-4" aria-label="Main navigation">
         <div className="flex items-center justify-between">
           <button
