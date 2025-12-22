@@ -38,12 +38,17 @@ export function useRestTimer(): UseRestTimerReturn {
         setTimeLeft((prev) => {
           if (prev <= 1) {
             setIsResting(false);
+
             vibrate(VIBRATION_PATTERNS.MEDIUM);
             playSound(SOUND_PATHS.BEEP);
+
             showNotification("Rest Time Over! 💪", {
               body: "Time to get back to work!",
               tag: NOTIFICATION_TAGS.REST_TIMER,
+              vibrate: VIBRATION_PATTERNS.MEDIUM,
+              requireInteraction: false,
             });
+
             return 0;
           }
           return prev - 1;

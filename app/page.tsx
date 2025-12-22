@@ -25,12 +25,8 @@ export default function HomePage() {
     dispatch(initializeApp());
   }, [dispatch]);
 
-  // Restore workout view if there's an active workout
   useEffect(() => {
     if (isInitialized && currentWorkout && currentView === "activity") {
-      // If there's an active workout but we're on activity view,
-      // it means user navigated away and came back
-      // Don't automatically switch views, let user decide
     }
   }, [isInitialized, currentWorkout, currentView]);
 
@@ -39,7 +35,6 @@ export default function HomePage() {
       const workout =
         workoutId === "upper" ? UPPER_BODY_WORKOUT : LOWER_BODY_WORKOUT;
 
-      // startWorkout will now automatically resume if the workout exists in activeWorkouts
       dispatch(startWorkout(workout));
       dispatch(setCurrentView("workout"));
     },

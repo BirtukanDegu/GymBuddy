@@ -4,7 +4,7 @@ import { initializeWorkoutSets } from "@/lib/workoutUtils";
 
 interface WorkoutState {
   currentWorkout: Workout | null;
-  activeWorkouts: Record<string, Workout>; // Store multiple active workouts by ID
+  activeWorkouts: Record<string, Workout>; 
   workoutHistory: Workout[];
   startTime: number | null;
   isActive: boolean;
@@ -27,10 +27,9 @@ const loadState = (): WorkoutState => {
 
     const loadedState = JSON.parse(serializedState) as Partial<WorkoutState>;
 
-    // Migrate old state to new structure
     return {
       currentWorkout: loadedState.currentWorkout || null,
-      activeWorkouts: loadedState.activeWorkouts || {}, // Ensure activeWorkouts exists
+      activeWorkouts: loadedState.activeWorkouts || {}, 
       workoutHistory: loadedState.workoutHistory || [],
       startTime: loadedState.startTime || null,
       isActive: loadedState.isActive || false,
@@ -59,17 +58,13 @@ export const workoutSlice = createSlice({
     startWorkout: (state, action: PayloadAction<Workout>) => {
       const workoutId = action.payload.id;
 
-      // Ensure activeWorkouts exists
       if (!state.activeWorkouts) {
         state.activeWorkouts = {};
       }
 
-      // Check if this workout already exists in activeWorkouts
       if (state.activeWorkouts[workoutId]) {
-        // Resume existing workout
         state.currentWorkout = state.activeWorkouts[workoutId];
       } else {
-        // Initialize new workout
         const workout = initializeWorkoutSets(action.payload);
         state.currentWorkout = workout;
         state.activeWorkouts[workoutId] = workout;
@@ -100,7 +95,6 @@ export const workoutSlice = createSlice({
           ...action.payload.updates,
         };
 
-        // Update in activeWorkouts as well
         if (state.activeWorkouts && state.currentWorkout.id) {
           state.activeWorkouts[state.currentWorkout.id] = state.currentWorkout;
         }
@@ -126,7 +120,6 @@ export const workoutSlice = createSlice({
         const set = exercise.setDetails[action.payload.setIndex];
         set.isCompleted = !set.isCompleted;
 
-        // Update in activeWorkouts as well
         if (state.activeWorkouts && state.currentWorkout.id) {
           state.activeWorkouts[state.currentWorkout.id] = state.currentWorkout;
         }
@@ -153,7 +146,6 @@ export const workoutSlice = createSlice({
         exercise.setDetails[action.payload.setIndex].actualWeight =
           action.payload.weight;
 
-        // Update in activeWorkouts as well
         if (state.activeWorkouts && state.currentWorkout.id) {
           state.activeWorkouts[state.currentWorkout.id] = state.currentWorkout;
         }
@@ -170,7 +162,6 @@ export const workoutSlice = createSlice({
         id: `${state.currentWorkout.id}-${Date.now()}`,
       });
 
-      // Remove from activeWorkouts when completed
       if (state.activeWorkouts && state.currentWorkout.id) {
         delete state.activeWorkouts[state.currentWorkout.id];
       }
@@ -182,7 +173,6 @@ export const workoutSlice = createSlice({
     },
 
     cancelWorkout: (state) => {
-      // Remove from activeWorkouts when cancelled
       if (state.currentWorkout && state.activeWorkouts) {
         delete state.activeWorkouts[state.currentWorkout.id];
       }
@@ -214,14 +204,12 @@ export const workoutSlice = createSlice({
     },
 
     resetWorkout: (state, action: PayloadAction<string>) => {
-      // Remove a specific workout from activeWorkouts
       const workoutId = action.payload;
 
       if (state.activeWorkouts) {
         delete state.activeWorkouts[workoutId];
       }
 
-      // If it's the current workout, clear it
       if (state.currentWorkout?.id === workoutId) {
         state.currentWorkout = null;
         state.startTime = null;

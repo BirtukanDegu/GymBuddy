@@ -4,12 +4,16 @@ import { useState, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Workout } from "@/types";
-import { vibrate, playSound } from "@/lib/pwa";
+import { vibrate, playSound, showNotification } from "@/lib/pwa";
 import { SummaryModal } from "./SummaryModal";
 import { Confetti } from "./Confetti";
 import { useWorkoutTimer } from "@/hooks/useWorkoutTimer";
 import { useRestTimer } from "@/hooks/useRestTimer";
-import { VIBRATION_PATTERNS, SOUND_PATHS } from "@/lib/constants";
+import {
+  VIBRATION_PATTERNS,
+  SOUND_PATHS,
+  NOTIFICATION_TAGS,
+} from "@/lib/constants";
 import { getTotalSets, getCompletedSets } from "@/lib/workoutUtils";
 import { WorkoutHeader } from "./workout/WorkoutHeader";
 import { WorkoutProgress } from "./workout/WorkoutProgress";
@@ -32,7 +36,12 @@ export function ActiveWorkoutView({
 }: ActiveWorkoutViewProps) {
   const dispatch = useAppDispatch();
   const { elapsed, isRunning, toggle } = useWorkoutTimer();
-  const { timeLeft: restTimer, isResting, startRest } = useRestTimer();
+  const {
+    timeLeft: restTimer,
+    isResting,
+    startRest,
+    cancelRest,
+  } = useRestTimer();
 
   const [expandedExercise, setExpandedExercise] = useState<string | null>(null);
   const [showSummary, setShowSummary] = useState(false);
@@ -63,9 +72,11 @@ export function ActiveWorkoutView({
           vibrate([...VIBRATION_PATTERNS.CELEBRATION]);
           setTimeout(() => setShowConfetti(false), 3000);
         }
+      } else {
+        cancelRest();
       }
     },
-    [workout.exercises, dispatch, startRest]
+    [workout.exercises, dispatch, startRest, cancelRest]
   );
 
   const handleUpdateSetWeight = useCallback(
@@ -76,10 +87,20 @@ export function ActiveWorkoutView({
   );
 
   const handleFinishWorkout = useCallback(() => {
+    vibrate(VIBRATION_PATTERNS.CELEBRATION);
+    playSound(SOUND_PATHS.SUCCESS);
+
+    showNotification("Workout Complete! 🎉", {
+      body: `Great job! You completed ${completedSets} sets today!`,
+      tag: NOTIFICATION_TAGS.WORKOUT_COMPLETE,
+      vibrate: VIBRATION_PATTERNS.CELEBRATION,
+      requireInteraction: false,
+    });
+
     dispatch(completeWorkout());
     setShowSummary(false);
     onNavigate("plan");
-  }, [dispatch, onNavigate]);
+  }, [dispatch, onNavigate, completedSets]);
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white relative">

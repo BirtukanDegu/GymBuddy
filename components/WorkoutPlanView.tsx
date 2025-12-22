@@ -41,7 +41,6 @@ export function WorkoutPlanView({
 
   const handleWorkoutClick = (workoutId: "upper" | "lower") => {
     onSelectWorkout(workoutId);
-    // Navigation is now handled in the onSelectWorkout callback
   };
 
   return (

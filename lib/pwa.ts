@@ -38,7 +38,6 @@ export const showNotification = async (
 
   const hasPermission = await requestNotificationPermission();
   if (!hasPermission) {
-    console.warn("Notification permission not granted");
     return;
   }
 
