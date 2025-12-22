@@ -105,7 +105,6 @@ export function usePWA(): UsePWAReturn {
 
   const promptInstall = useCallback(async (): Promise<boolean> => {
     if (!installPrompt) {
-      console.warn("No install prompt available");
       return false;
     }
 

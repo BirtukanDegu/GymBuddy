@@ -119,7 +119,6 @@ export const isServiceWorkerSupported = (): boolean => {
 export const registerServiceWorker =
   async (): Promise<ServiceWorkerRegistration | null> => {
     if (!isServiceWorkerSupported()) {
-      console.warn("Service Worker not supported");
       return null;
     }
 
@@ -127,7 +126,6 @@ export const registerServiceWorker =
       const registration = await navigator.serviceWorker.register("/sw.js", {
         scope: "/",
       });
-      console.log("Service Worker registered successfully:", registration);
       return registration;
     } catch (error) {
       console.error("Service Worker registration failed:", error);
@@ -144,7 +142,6 @@ export const unregisterServiceWorkers = async (): Promise<boolean> => {
   try {
     const registrations = await navigator.serviceWorker.getRegistrations();
     await Promise.all(registrations.map((reg) => reg.unregister()));
-    console.log("All service workers unregistered");
     return true;
   } catch (error) {
     console.error("Failed to unregister service workers:", error);
@@ -162,7 +159,6 @@ export const subscribeToPushNotifications = async (
   try {
     const hasPermission = await requestNotificationPermission();
     if (!hasPermission) {
-      console.warn("Notification permission not granted");
       return null;
     }
 
@@ -180,7 +176,6 @@ export const subscribeToPushNotifications = async (
         : undefined,
     });
 
-    console.log("Push notification subscription:", subscription);
     return subscription;
   } catch (error) {
     console.error("Failed to subscribe to push notifications:", error);
@@ -195,7 +190,6 @@ export const unsubscribeFromPushNotifications = async (
     const subscription = await registration.pushManager.getSubscription();
     if (subscription) {
       await subscription.unsubscribe();
-      console.log("Unsubscribed from push notifications");
       return true;
     }
     return false;
@@ -222,21 +216,13 @@ export const promptPWAInstall = async (
   deferredPrompt: any
 ): Promise<boolean> => {
   if (!deferredPrompt) {
-    console.warn("No install prompt available");
     return false;
   }
 
   try {
     await deferredPrompt.prompt();
     const choiceResult = await deferredPrompt.userChoice;
-
-    if (choiceResult.outcome === "accepted") {
-      console.log("User accepted the install prompt");
-      return true;
-    } else {
-      console.log("User dismissed the install prompt");
-      return false;
-    }
+    return choiceResult.outcome === "accepted";
   } catch (error) {
     console.error("Error prompting PWA install:", error);
     return false;
@@ -245,14 +231,12 @@ export const promptPWAInstall = async (
 
 export const cacheAssets = async (urls: string[]): Promise<boolean> => {
   if (!("caches" in window)) {
-    console.warn("Cache API not supported");
     return false;
   }
 
   try {
     const cache = await caches.open("gym-buddy-v1");
     await cache.addAll(urls);
-    console.log("Assets cached successfully");
     return true;
   } catch (error) {
     console.error("Failed to cache assets:", error);
@@ -266,7 +250,6 @@ export const clearAllCaches = async (): Promise<boolean> => {
   try {
     const cacheNames = await caches.keys();
     await Promise.all(cacheNames.map((name) => caches.delete(name)));
-    console.log("All caches cleared");
     return true;
   } catch (error) {
     console.error("Failed to clear caches:", error);

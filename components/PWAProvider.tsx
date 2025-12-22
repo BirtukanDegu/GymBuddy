@@ -27,14 +27,6 @@ export function PWAProvider({ children }: PWAProviderProps) {
     }
   }, [isInstalled, notificationPermission, requestNotifications]);
 
-  useEffect(() => {
-    console.log("PWA Status:", {
-      isInstalled,
-      isOffline,
-      notificationPermission,
-    });
-  }, [isInstalled, isOffline, notificationPermission]);
-
   return (
     <>
       {children}

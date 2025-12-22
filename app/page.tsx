@@ -48,16 +48,9 @@ export default function HomePage() {
 
   const handleNavigate = useCallback(
     (view: ViewType) => {
-      // Only start a new workout if explicitly navigating to workout view
-      // and there's no current workout in progress
-      if (view === "workout" && !currentWorkout) {
-        // Don't automatically start a workout, this should only happen
-        // when user selects a workout from the plan view
-        console.warn("Navigating to workout view without an active workout");
-      }
       dispatch(setCurrentView(view));
     },
-    [currentWorkout, dispatch]
+    [dispatch]
   );
 
   if (!isInitialized) {
