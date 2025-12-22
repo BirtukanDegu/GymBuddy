@@ -294,7 +294,7 @@ export function WorkoutPlanView({
                       <p className="text-sm font-black text-black">75%</p>
                     </div>
                   </div>
-                  <div className="absolute right-10 -bottom-28 w-40 h-40">
+                  <div className="absolute right-10 -bottom-28 w-44 h-44">
                     <Image
                       src="/images/3.svg"
                       alt="Exercise"
