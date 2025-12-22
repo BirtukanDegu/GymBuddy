@@ -11,24 +11,22 @@ const STATIC_ASSETS = [
 ];
 
 self.addEventListener("install", (event) => {
-  console.log("[Service Worker] Installing...");
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log("[Service Worker] Caching static assets");
-      return cache.addAll(STATIC_ASSETS);
+      return cache.addAll(STATIC_ASSETS).catch((error) => {
+        console.error("[Service Worker] Failed to cache assets:", error);
+      });
     })
   );
   self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
-  console.log("[Service Worker] Activating...");
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
-            console.log("[Service Worker] Deleting old cache:", cacheName);
             return caches.delete(cacheName);
           }
         })
@@ -39,31 +37,54 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
+  if (event.request.method !== "GET") {
+    return;
+  }
+
+  if (!event.request.url.startsWith("http")) {
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      if (response) {
-        return response;
-      }
-      return fetch(event.request).then((response) => {
-        if (!response || response.status !== 200 || response.type !== "basic") {
+    fetch(event.request)
+      .then((response) => {
+        if (!response || response.status !== 200 || response.type === "error") {
           return response;
         }
 
         const responseToCache = response.clone();
 
         caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
+          if (event.request.method === "GET") {
+            cache.put(event.request, responseToCache);
+          }
         });
 
         return response;
-      });
-    })
+      })
+      .catch(() => {
+        return caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+
+          if (event.request.mode === "navigate") {
+            return caches.match(OFFLINE_URL);
+          }
+
+          return new Response("Offline", {
+            status: 503,
+            statusText: "Service Unavailable",
+            headers: new Headers({
+              "Content-Type": "text/plain",
+            }),
+          });
+        });
+      })
   );
 });
 
 self.addEventListener("push", (event) => {
-  console.log("[Service Worker] Push received:", event);
-
   let data = {
     title: "Gym Buddy",
     body: "You have a new notification",
@@ -92,7 +113,6 @@ self.addEventListener("push", (event) => {
 });
 
 self.addEventListener("notificationclick", (event) => {
-  console.log("[Service Worker] Notification clicked:", event);
   event.notification.close();
 
   event.waitUntil(
@@ -100,7 +120,10 @@ self.addEventListener("notificationclick", (event) => {
       .matchAll({ type: "window", includeUncontrolled: true })
       .then((clientList) => {
         for (const client of clientList) {
-          if (client.url === "/" && "focus" in client) {
+          if (
+            client.url.includes(self.registration.scope) &&
+            "focus" in client
+          ) {
             return client.focus();
           }
         }
@@ -112,12 +135,16 @@ self.addEventListener("notificationclick", (event) => {
 });
 
 self.addEventListener("sync", (event) => {
-  console.log("[Service Worker] Background sync:", event.tag);
   if (event.tag === "sync-workouts") {
     event.waitUntil(syncWorkouts());
   }
 });
 
 async function syncWorkouts() {
-  console.log("[Service Worker] Syncing workouts...");
+  try {
+    return Promise.resolve();
+  } catch (error) {
+    console.error("[Service Worker] Sync failed:", error);
+    return Promise.reject(error);
+  }
 }

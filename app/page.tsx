@@ -25,11 +25,6 @@ export default function HomePage() {
     dispatch(initializeApp());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (isInitialized && currentWorkout && currentView === "activity") {
-    }
-  }, [isInitialized, currentWorkout, currentView]);
-
   const handleSelectWorkout = useCallback(
     (workoutId: "upper" | "lower") => {
       const workout =

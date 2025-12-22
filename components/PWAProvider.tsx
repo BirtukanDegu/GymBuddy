@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, ReactNode } from "react";
+import { useEffect, ReactNode, useState } from "react";
 import { usePWA } from "@/hooks/usePWA";
 import { motion, AnimatePresence } from "framer-motion";
 import { WifiOff, Wifi } from "lucide-react";
@@ -39,7 +39,7 @@ export function PWAProvider({ children }: PWAProviderProps) {
             exit={{ y: -100, opacity: 0 }}
             className="fixed top-4 left-1/2 -translate-x-1/2 z-50"
           >
-            <div className="bg-orange-500 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2">
+            <div className="bg-lime-500 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2">
               <WifiOff className="w-5 h-5" />
               <span className="font-semibold text-sm">You're offline</span>
             </div>
@@ -47,9 +47,7 @@ export function PWAProvider({ children }: PWAProviderProps) {
         )}
       </AnimatePresence>
 
-      <AnimatePresence>
-        {!isOffline && typeof window !== "undefined" && <OnlineIndicator />}
-      </AnimatePresence>
+      <AnimatePresence>{!isOffline && <OnlineIndicator />}</AnimatePresence>
     </>
   );
 }
@@ -82,9 +80,4 @@ function OnlineIndicator() {
       </div>
     </motion.div>
   );
-}
-
-function useState<T>(initialValue: T): [T, (value: T) => void] {
-  const [state, setState] = (0, require("react").useState)(initialValue);
-  return [state, setState];
 }
