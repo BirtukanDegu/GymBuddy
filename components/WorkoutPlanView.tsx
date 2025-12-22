@@ -296,7 +296,7 @@ export function WorkoutPlanView({
                   </div>
                   <div className="absolute right-10 -bottom-28 w-40 h-40">
                     <Image
-                      src="/images/7.svg"
+                      src="/images/3.svg"
                       alt="Exercise"
                       fill
                       className="object-contain"
