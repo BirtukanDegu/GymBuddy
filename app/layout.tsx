@@ -3,6 +3,7 @@ import { Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Bricolage_Grotesque({ subsets: ["latin"] });
 
@@ -62,7 +63,10 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <ErrorBoundary>
-          <Providers>{children}</Providers>
+          <Providers>
+            <Toaster position="top-center"/>
+            {children}
+          </Providers>
         </ErrorBoundary>
       </body>
     </html>

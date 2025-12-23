@@ -44,7 +44,7 @@ export function DesktopLoadingSkeleton() {
 export function MobileLoadingSkeleton() {
   return (
     <div className="lg:hidden">
-      <div className="mobile-container relative pb-24 md:pb-0">
+      <div className="mobile-container relative">
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <Skeleton className="h-8 w-40" />
@@ -82,7 +82,7 @@ export function MobileLoadingSkeleton() {
 
 export function LoadingSkeleton() {
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white pb-24 md:pb-0">
+    <main className="min-h-screen bg-[#0a0a0a] text-white">
       <DesktopLoadingSkeleton />
       <MobileLoadingSkeleton />
     </main>
